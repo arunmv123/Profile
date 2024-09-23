@@ -1,0 +1,6 @@
+# ignore ALL .package-lock.json file
+*.package-lock
+*.env
+
+# ignore ALL files in ANY directory named node_modules
+node_modules/
