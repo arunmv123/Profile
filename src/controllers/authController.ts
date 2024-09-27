@@ -7,12 +7,12 @@ import { sendOTP } from "../utils/mail";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  // if (email || password) {
-  //   return res.status(400).json({ message: "Invalid input" });
-  // }
+  if (!email || !password) {
+    return res.status(403).json({ message: "Invalid input" });
+  }
   const userExists = await User.findOne({ email });
   if (userExists) {
-    return res.status(400).json({ message: "User already exists" });
+    return res.status(401).json({ message: "User already exists" });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,7 +36,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user || user.otp !== otp || user.otpExpires < new Date()) {
-    return res.status(400).json({ message: "Invalid OTP" });
+    return res.status(401).json({ message: "Invalid OTP" });
   }
 
   user.isVerified = true;
@@ -52,11 +52,11 @@ export const login = async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Invalid credentials" });
   }
 
   if (!user.isVerified) {
-    return res.status(400).json({ message: "Email not verified" });
+    return res.status(401).json({ message: "Email not verified" });
   }
 
   const token = generateToken(user.id);

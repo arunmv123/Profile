@@ -14,7 +14,8 @@ export const authMiddleware = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "");
-    (<any>req).user = decoded;
+    (<any>req).user = { userId: (decoded as any).id };
+    //(<any>req).user = decoded;
     next();
   } catch (error) {
     res.status(401).json({ message: "Not authorized, token failed" });

@@ -42,7 +42,7 @@ export const generatePDF = (profile: any): Promise<Buffer> => {
     doc.moveDown();
     doc.text("Skills:");
     profile.skills.forEach((skill: any, index: number) => {
-      doc.text(`  ${index + 1}. ${skill}`);
+      doc.text(`  ${index + 1}. ${skill.skill}`);
     });
 
     doc.end();

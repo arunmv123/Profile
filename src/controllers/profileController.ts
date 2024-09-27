@@ -7,26 +7,21 @@ import { sendEmailWithPDF } from "../utils/mail";
 
 // Get user profile
 const getProfile = async (req: Request, res: Response) => {
-  const userId = req.body; // Assuming JWT middleware adds user to req object
-  const profile = await Profile.findOne({ userId });
-
-  if (!profile) {
-    return res.status(404).json({ message: "Profile not found" });
-  }
-
+  const id = (<any>req).user?.userId; // Get the logged-in user's ID from the middleware
+  const profile = await Profile.findOne({ userId: id });
   return res.status(200).json(profile);
 };
 
 // Create or update profile information
 const updateProfile = async (req: Request, res: Response) => {
-  const userId = req.body.userId;
+  const userId = (<any>req).user?.userId; 
   let profile = await Profile.findOne({ userId });
   // Check if profile is already 100% complete
-  if (profile?.profileCompletion === 100) {
-    return res
-      .status(400)
-      .json({ message: "Profile is already complete and cannot be edited." });
-  }
+  // if (profile?.profileCompletion === 100) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "Profile is already complete and cannot be edited." });
+  // }
   // Check if profile is already submitted
   if (profile?.submitted) {
     return res
@@ -69,7 +64,7 @@ const updateProfile = async (req: Request, res: Response) => {
 
 // Submit the profile
 const submitProfile = async (req: Request, res: Response) => {
-  const userId = req.body.userId;
+  const userId = (<any>req).user?.userId; 
 
   // Ensure the user exists
   const user = await User.findById(userId);
